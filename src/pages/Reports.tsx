@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Calendar, ChevronDown, PieChart, BarChart3, LineChart, Table } from 'lucide-react';
-import { format } from 'date-fns';
 import { 
   BarChart, Bar, LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend 
 } from 'recharts';
-import { fetchReportData, ReportData } from '../services/api';
+
+
+interface ReportData {
+  chartData: Array<{name: string; [key: string]: any}>;
+  series: string[];
+  categoryData: Array<{name: string; value: number}>;
+  summary: Array<{label: string; value: number; change: number}>;
+}
 
 const Reports: React.FC = () => {
   const [reportType, setReportType] = useState('spending');
@@ -18,7 +24,11 @@ const Reports: React.FC = () => {
     const loadReportData = async () => {
       setIsLoading(true);
       try {
-        const data = await fetchReportData(reportType, timeRange);
+        const response = await fetch(`/api/reports?type=${reportType}&timeRange=${timeRange}`);
+        if (!response.ok) {
+          throw new Error(`API request failed with status: ${response.status}`);
+        }
+        const data = await response.json();
         setReportData(data);
       } catch (error) {
         console.error('Failed to fetch report data:', error);

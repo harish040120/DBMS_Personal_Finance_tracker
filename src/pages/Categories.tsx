@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, AlertCircle } from 'lucide-react';
-import { fetchCategories, Category } from '../services/api';
+import { fetchCategories, Category as BaseCategory } from '../services/api';
+
+// Extend the imported Category type to include the color property
+interface Category extends BaseCategory {
+  color: string;
+}
 
 const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -14,7 +19,11 @@ const Categories: React.FC = () => {
     const loadCategories = async () => {
       try {
         const data = await fetchCategories();
-        setCategories(data);
+        const categoriesWithColor = data.map(category => ({
+          ...category,
+          color: '#0A84FF' // Default color
+        }));
+        setCategories(categoriesWithColor);
       } catch (error) {
         console.error('Failed to fetch categories:', error);
       } finally {

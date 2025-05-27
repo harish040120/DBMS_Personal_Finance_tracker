@@ -10,7 +10,7 @@ interface TransactionItemProps {
 const TransactionItem: React.FC<TransactionItemProps> = ({ transaction }) => {
   const getIcon = () => {
     switch (transaction.category) {
-      case 'Shopping':
+      case 'Food':
         return <ShoppingCart size={16} />;
       case 'Housing':
         return <Home size={16} />;
